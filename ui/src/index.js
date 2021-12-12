@@ -7,15 +7,27 @@ import { ApolloProvider, split, HttpLink, ApolloClient, ApolloLink, InMemoryCach
 import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
 
+// use with docker-compose
+// const wsLink = new WebSocketLink({
+//   uri: 'ws://localhost:8001/v1/graphql',
+//   options: {
+//     reconnect: true,
+//     lazy: true,
+//     timeout: 30000
+//   }
+// });
+
 const wsLink = new WebSocketLink({
-  uri: 'ws://localhost:8001/v1/graphql',
+  uri: 'ws://graphql:8080/v1/graphql',
   options: {
-    reconnect: true
+    reconnect: true,
+    lazy: true,
+    timeout: 30000
   }
 });
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:8001/v1/graphql'
+  uri: 'http://graphql:8080/v1/graphql'
 });
 
 const client = new ApolloClient({
