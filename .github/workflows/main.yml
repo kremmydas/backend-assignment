@@ -37,6 +37,7 @@ jobs:
       - name: Test service URLs using Ingress Controller
         run: | 
           sleep 30
+          kubectl get pods -A
           echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
           echo -n "------------------opening the service------------------"
           curl -I -k pchdemo.local
