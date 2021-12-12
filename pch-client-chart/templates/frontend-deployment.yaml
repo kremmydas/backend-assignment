@@ -21,6 +21,22 @@ spec:
       containers:
       - name: frontend
         image: {{ .image }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+          periodSeconds: 5
+          failureThreshold: 2
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          timeoutSeconds: 10
+          periodSeconds: 5
+          failureThreshold: 2
       restartPolicy: Always
       {{- with $.Values.nodeSelector }}
       nodeSelector:

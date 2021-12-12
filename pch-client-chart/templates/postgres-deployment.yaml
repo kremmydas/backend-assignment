@@ -21,6 +21,20 @@ spec:
       containers:
       - name: postgres
         image: {{ .image }}
+        readinessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+          periodSeconds: 5
+          failureThreshold: 2
+        livenessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 15
+          timeoutSeconds: 10
+          periodSeconds: 5
+          failureThreshold: 2
         env:
         - name: POSTGRES_DB
           valueFrom:

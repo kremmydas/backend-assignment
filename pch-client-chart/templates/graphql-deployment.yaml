@@ -29,6 +29,22 @@ spec:
         args:
         - graphql-engine
         - serve
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+          periodSeconds: 5
+          failureThreshold: 2
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          timeoutSeconds: 10
+          periodSeconds: 5
+          failureThreshold: 2
         env:
         - name: HASURA_GRAPHQL_DATABASE_URL
           valueFrom:
