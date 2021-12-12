@@ -40,4 +40,9 @@ jobs:
           echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
           echo -n "------------------opening the service------------------"
           curl -I -k pchdemo.local
+      - name: Check ixp_server_data table
+        run: |
+          kubectl exec $(echo $(kubectl get pods -l app=postgres) | awk '{print $6}') \
+            -- sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "select * from ixp_server_data;"'
+
 
