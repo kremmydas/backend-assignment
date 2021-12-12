@@ -35,5 +35,6 @@ jobs:
         run: | 
           minikube service list
           minikube service frontend --url
+          sleep 30
           echo -n "------------------opening the service------------------"
           curl -I -k $(minikube service frontend --url)
