@@ -1,9 +1,9 @@
 db:
-  host: db
+  host: postgres
   port: 5432
-  user: ioannis
-  password: ioannissecret
-  database: ioannisdb
+  user: demo_user
+  password: aF1dG2qU5dX1
+  database: demo_db
 
 parser:
   server_limit: 50
