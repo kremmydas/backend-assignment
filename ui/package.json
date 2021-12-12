@@ -7,10 +7,12 @@
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.6.3",
+    "auth0-js": "^9.18.0",
     "graphql": "^15.5.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.2",
+    "react-token-auth": "^2.3.8",
     "subscriptions-transport-ws": "^0.9.18",
     "web-vitals": "^1.1.0"
   },
