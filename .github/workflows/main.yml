@@ -26,7 +26,9 @@ jobs:
       - name: Start minikube
         uses: kremmydas/setup-minikube@master
       - name: Try the cluster !
-        run: kubectl get pods -A
+        run:
+          sleep 30 
+          kubectl get pods -A
 
       - name: Deploy to minikube
         run:
@@ -38,3 +40,6 @@ jobs:
           sleep 30
           echo -n "------------------opening the service------------------"
           curl -I -k $(minikube service frontend --url)
+          echo $(minikube ip) pch-client.local >> /etc/hosts
+          curl -I -k pch-client.local
+
