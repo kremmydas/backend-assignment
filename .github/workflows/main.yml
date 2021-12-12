@@ -31,3 +31,9 @@ jobs:
       - name: Deploy to minikube
         run:
           helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
+      - name: Test service URLs
+        run: | 
+          minikube service list
+          minikube service frontend --url
+          echo -n "------------------opening the service------------------"
+          curl $(minikube service frontend --url)
