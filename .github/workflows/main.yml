@@ -36,11 +36,8 @@ jobs:
           helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
       - name: Test service URLs
         run: | 
-          minikube service list
-          minikube service frontend --url
           sleep 30
-          echo -n "------------------opening the service------------------"
-          curl -I -k $(minikube service frontend --url)
           echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
+          echo -n "------------------opening the service------------------"
           curl -I -k pchdemo.local
 
