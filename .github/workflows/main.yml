@@ -33,11 +33,10 @@ jobs:
           helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
       - name: Check the pods
         run:
-          kubectl get pods -A
-      - name: Test service URLs using Ingress Controller
-        run: | 
           sleep 60
           kubectl get pods -A
+      - name: Test service URL using Ingress Controller
+        run: | 
           echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
           echo -n "------------------opening the service------------------"
           curl -I -k pchdemo.local
