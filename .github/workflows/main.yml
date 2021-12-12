@@ -42,5 +42,5 @@ jobs:
           echo -n "------------------opening the service------------------"
           curl -I -k $(minikube service frontend --url)
           echo $(minikube ip) pch-client.local | sudo tee -a /etc/hosts
-          curl -I -k pch-client.local
+          curl -I -k pchdemo.local
 
