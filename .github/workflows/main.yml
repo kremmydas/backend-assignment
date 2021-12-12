@@ -41,6 +41,6 @@ jobs:
           sleep 30
           echo -n "------------------opening the service------------------"
           curl -I -k $(minikube service frontend --url)
-          echo $(minikube ip) pch-client.local | sudo tee -a /etc/hosts
+          echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
           curl -I -k pchdemo.local
 
