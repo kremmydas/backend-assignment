@@ -27,9 +27,8 @@ jobs:
         uses: kremmydas/setup-minikube@master
       - name: Try the cluster !
         run:
-          sleep 30 
+          sleep 30
           kubectl get pods -A
-
       - name: Deploy to minikube
         run:
           helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
