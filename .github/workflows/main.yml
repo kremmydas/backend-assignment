@@ -25,15 +25,17 @@ jobs:
       - uses: actions/checkout@v2
       - name: Start minikube
         uses: kremmydas/setup-minikube@master
-      - name: Wait for 30 seconds for kube services to be ready
+      - name: Wait for 30 seconds for K8s pods to be ready
         run: | 
           sleep 30
       - name: Deploy to minikube
         run:
           helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
+      - name: Wait for 60 seconds for app pods to be ready
+        run: | 
+          sleep 60
       - name: Check the pods
         run:
-          sleep 60
           kubectl get pods -A
       - name: Test service URL using Ingress Controller
         run: | 
