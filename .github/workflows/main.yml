@@ -28,13 +28,13 @@ jobs:
       - name: Wait for 30 seconds for kube services to be ready
         run: | 
           sleep 30
-      - name: Try the cluster !
-        run:
-          kubectl get pods -A
       - name: Deploy to minikube
         run:
           helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
-      - name: Test service URLs
+      - name: Check the pods
+        run:
+          kubectl get pods -A
+      - name: Test service URLs using Ingress Controller
         run: | 
           sleep 30
           echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
@@ -42,7 +42,6 @@ jobs:
           curl -I -k pchdemo.local
       - name: Check ixp_server_data table
         run: |
-          kubectl exec $(echo $(kubectl get pods -l app=postgres) | awk '{print $6}') \
-            -- sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "select * from ixp_server_data;"'
+          kubectl exec $(echo $(kubectl get pods -l app=postgres) | awk '{print $6}') -- sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "select * from ixp_server_data;"'
 
 
