@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  labels:
+{{ include "pch-client.labels" . | indent 4 }}
+  annotations:
+    {{- with .Values.pvc.annotations }}
+{{ toYaml . | indent 4 }}
+    {{- end }}
+spec:
+  accessModes:
+    - {{ .Values.pvc.accessMode | default "ReadWriteMany" }}
+  resources:
+    requests:
+      storage: {{ .Values.pvc.storage }}
+  {{- if hasKey .Values.pvc "storageClassName" }}
+  storageClassName: {{ .Values.pvc.storageClassName }}
+  {{- end }}

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgres
+{{ include "pch-client.labels" . | indent 4 }}
+  name: postgres
+{{- with .Values.services.postgres }}
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: {{ .image }}
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: configmap
+              key: dbName
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: dbPass
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: configmap
+              key: dbUser
+        volumeMounts:
+        - mountPath: /docker-entrypoint-initdb.d/create-schema.sql
+          name: postgres-configmap
+          subPath: create-schema.sql
+        - mountPath: /var/lib/postgresql/data/
+          name: postgres-pvc
+          subPath: postgres-data
+      restartPolicy: Always
+      volumes:
+      - configMap:
+          name: volumes
+        name: postgres-configmap
+      - persistentVolumeClaim:
+          claimName: postgres-pvc
+        name: postgres-pvc
+      {{- with $.Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | nindent 8 }}
+      {{- end }}
+  {{- end }}

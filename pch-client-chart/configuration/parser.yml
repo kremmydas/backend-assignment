@@ -1,0 +1,13 @@
+db:
+  host: postgres
+  port: 5432
+  user: demo_user
+  password: aF1dG2qU5dX1
+  database: demo_db
+
+parser:
+  server_limit: 50
+  protocol: IPv4 # IPv4 or IPv6
+  ixp:
+  city:
+  country:

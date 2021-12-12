@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: graphql
+{{ include "pch-client.labels" . | indent 4 }}
+  name: graphql
+{{- with .Values.services.graphql }}
+spec:
+  selector:
+    matchLabels:
+      app: graphql
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: graphql
+    spec:
+      initContainers:
+      - name: wait-for-service
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z {{ $.Values.dbHost }} {{ $.Values.dbPort }}; do echo waiting for services; sleep 10; done;']
+      containers:
+      - name: graphql
+        image: {{ .image }}
+        args:
+        - graphql-engine
+        - serve
+        env:
+        - name: HASURA_GRAPHQL_DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: configmap
+              key: dbUri
+        - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+          valueFrom:
+            configMapKeyRef:
+              name: configmap
+              key: hasuraGui
+        - name: HASURA_GRAPHQL_DEV_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: configmap
+              key: devmode
+        - name: HASURA_GRAPHQL_ENABLED_LOG_TYPES
+          valueFrom:
+            configMapKeyRef:
+              name: configmap
+              key: logtypes
+        volumeMounts:
+        - mountPath: /hasura-migrations/metadata.yaml
+          name: graphql-configmap
+          subPath: metadata.yaml
+      volumes:
+      - configMap:
+          name: volumes
+        name: graphql-configmap
+      restartPolicy: Always
+      {{- with $.Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | nindent 8 }}
+      {{- end }}
+  {{- end }}

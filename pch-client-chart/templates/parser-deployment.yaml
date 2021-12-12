@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: parser
+{{ include "pch-client.labels" . | indent 4 }}
+  name: parser
+{{- with .Values.services.parser }}
+spec:
+  selector:
+    matchLabels:
+      app: parser
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: parser
+    spec:
+      containers:
+      - name: parser
+        image: {{ .image }}
+        volumeMounts:
+        - mountPath: /config/
+          name: parser-configmap
+      volumes:
+      - configMap:
+          name: volumes
+          items:
+          - key: parser.yml
+            path: parser.yml
+        name: parser-configmap
+      restartPolicy: Always
+      {{- with $.Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | nindent 8 }}
+      {{- end }}
+  {{- end }}

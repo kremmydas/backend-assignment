@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap
+data:
+  dbHost: {{ .Values.dbHost | default "postgres" }}
+  dbPort: {{ .Values.dbPort | default "5432" | quote }}
+  dbName: {{ .Values.dbName | default "demo_db" | quote }}
+  dbUser: {{ .Values.dbUser | default "demo_user" | quote }}
+  dbSchema: {{ .Values.dbSchema | default "public" | quote }}
+  dbUri: postgres://{{ .Values.dbUser | default "demo_user" }}:{{ .Values.dbPass | default "aF1dG2qU5dX1" }}@{{ .Values.dbHost | default "postgres"}}:{{ .Values.dbPort | default 5432 }}/{{ .Values.dbName | default "demo_db" }}
+  hasuraGui: {{ .Values.hasuraGui | default "true" | quote }}
+  devmode: {{ .Values.devmode | default "true" | quote }}
+  logtypes: {{ .Values.logtypes | default "startup, http-log, webhook-log, websocket-log, query-log" | quote }}
