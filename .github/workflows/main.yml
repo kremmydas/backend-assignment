@@ -36,4 +36,4 @@ jobs:
           minikube service list
           minikube service frontend --url
           echo -n "------------------opening the service------------------"
-          curl $(minikube service frontend --url)
+          curl -I -k $(minikube service frontend --url)
