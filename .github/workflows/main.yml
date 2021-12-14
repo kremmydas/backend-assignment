@@ -24,8 +24,10 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
-      - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/}
+      - name: Prints the current branch name
+        run: echo running on branch "${GITHUB_BRANCH##*/}"
+        env:
+          GITHUB_BRANCH: ${{ github.ref }}
       # Generate version based on current date and run number
       - name: Version generator
         id: version-generator
@@ -102,7 +104,7 @@ jobs:
         uses: EndBug/add-and-commit@v7.2.1 
         with:
           # Name of the branch to use
-          branch: ${GITHUB_REF##*/}
+          branch: ${GITHUB_BRANCH}
           # The message for the commit. The [skip ci] is required for not trigger the CICD
           message: 'Update image with version ${{ steps.version-generator.outputs.BUILD_NO }} [skip ci]'
 
