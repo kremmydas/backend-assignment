@@ -23,32 +23,46 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
+      # Generate version based on current date and run number
+      - name: Version generator
+        id: version-generator
+        run: |
+          echo ${{ github.run_id }}
+          echo ${{ github.run_number }}
+          d=$(date +%Y%m%d)
+          echo "$d"
+          echo "::set-output name=BUILD_NO::${d}_${{ github.run_number }}"
       - name: docker login
         env:
           DOCKER_USER: ${{secrets.DOCKER_USER}}
           DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
+        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      # Build and push the frontend and parser images
       - name: Build the Docker image
         run: docker compose build
       - name: Docker Push
-        run: docker push andreask81/frontend:latest
+        run: docker push andreask81/frontend:${{ steps.version-generator.outputs.BUILD_NO }}, latest
       - name: Docker Push
-        run: docker push andreask81/parser:latest
+        run: docker push andreask81/parser:${{ steps.version-generator.outputs.BUILD_NO }}, latest
+      # Start minikube
       - name: Start minikube
         uses: kremmydas/setup-minikube@master
       - name: Wait for 30 seconds for K8s pods to be ready
         run: sleep 30
+      # Deploy chart to minikube
       - name: Deploy to minikube
         run: helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
       - name: Wait for 60 seconds for app pods to be ready
         run: sleep 60
       - name: Check the pods
         run: kubectl get pods -A
+      # Test service URL
       - name: Test service URL using Ingress Controller
         run: | 
           echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
           echo -n "------------------opening the service------------------"
           curl -I -k pchdemo.local
+      # Check ixp_server_data table
       - name: Check ixp_server_data table
         run: |
           sleep 120
