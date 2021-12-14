@@ -36,6 +36,7 @@ services:
     build:
       context: ./ui
       dockerfile: Dockerfile
+    image: andreask81/frontend:latest
     ports:
     - 8000:80
     depends_on:
@@ -45,5 +46,6 @@ services:
     build:
       context: ./parser
       dockerfile: Dockerfile
+    image: andreask81/parser:latest
     volumes:
     - ./parser/config:/config
