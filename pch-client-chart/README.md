@@ -62,7 +62,7 @@ Edit `/etc/hosts` file to point to the minikube IP for the specified hostname:
 
 ### 5. CI/CD using Github actions
 
-Github actions jobs are defined in `.github/workflows/main.yml ` file.
+Github actions jobs are defined in `.github/workflows/main.yml` file.
 
 - A pull request triggers the workflow only for the main branch.
 - Generate version based on current date and run number
