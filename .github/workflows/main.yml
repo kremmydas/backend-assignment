@@ -31,9 +31,9 @@ jobs:
       - name: Build the Docker image
         run: docker compose build
       - name: Docker Push
-        run: andreask81/frontend:latest
+        run: docker push andreask81/frontend:latest
       - name: Docker Push
-        run: andreask81/parser:latest
+        run: docker push andreask81/parser:latest
       - name: Start minikube
         uses: kremmydas/setup-minikube@master
       - name: Wait for 30 seconds for K8s pods to be ready
