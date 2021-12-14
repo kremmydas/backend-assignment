@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: parser
-        image: {{ .image }}
+        image: "{{ .image.repository }}:{{ .image.parser_tag }}"
         volumeMounts:
         - mountPath: /config/
           name: parser-configmap

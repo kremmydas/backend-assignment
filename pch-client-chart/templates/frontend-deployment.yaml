@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: {{ .image }}
+        image: "{{ .image.repository }}:{{ .image.frontend_tag }}"
         readinessProbe:
           httpGet:
             path: /
