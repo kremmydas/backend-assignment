@@ -1,5 +1,6 @@
 
-## Installation Steps
+## How to use
+
 
 ### 1. Build and push the `parser` and `ui` images
 
@@ -21,7 +22,9 @@ As an alternative, the minikube registry addon can be used.
 docker tag my/image localhost:5000/myimage
 docker push localhost:5000/myimage
 ```
-Note that the image name:tag for `frontend` and `parser` in `values.yaml` must be edited accordingly.
+Note that the image name for `frontend` and `parser` services in `values.yaml` must be edited accordingly.
+
+
 
 ### 2. Download and install minikube
 
@@ -31,6 +34,7 @@ We will use minikube to setup a local Kubernetes cluster on macOS
 
 `sudo mv minikube /usr/local/bin`
 
+
 ### 3. Start minikube
 
 `minikube start --memory 4096 --cpus 4`
@@ -39,11 +43,13 @@ Enable Ingress controller:
 
 `minikube addons enable ingress`
 
+
 ### 4. Install the pch-client chart
 
 Install the helm chart from the local folder:
 
 `helm install -f values.yaml pch-client .`
+
 
 ### 5. Using ingress resource
 
@@ -53,7 +59,20 @@ Edit `/etc/hosts` file to point to the minikube IP for the specified hostname:
 
 `echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts` 
 
-### 5. Observability
+
+### 5. CI/CD using Github actions
+
+Github actions jobs are defined in `.github/workflows/main.yml ` file.
+
+- A pull request triggers the workflow only for the main branch. 
+- An [action](https://github.com/kremmydas/setup-minikube) is used to setup a minikube cluster.
+- The helm chart is deployed on the cluster.
+- Some checks are included to verify the deployment:
+	- test the service URL with curl
+	- check data in ixp_server_data table
+
+
+### 6. Observability
 
 Kubernetes dashboard can be used for basic monitoring and metrics.
 
