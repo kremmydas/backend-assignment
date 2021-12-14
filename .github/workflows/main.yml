@@ -41,9 +41,18 @@ jobs:
       - name: Build the Docker image
         run: docker compose build
       - name: Docker Push
-        run: docker push andreask81/frontend:${{ steps.version-generator.outputs.BUILD_NO }}, latest
+        run: docker push andreask81/frontend:${{ steps.version-generator.outputs.BUILD_NO }}
       - name: Docker Push
-        run: docker push andreask81/parser:${{ steps.version-generator.outputs.BUILD_NO }}, latest
+        run: docker push andreask81/parser:${{ steps.version-generator.outputs.BUILD_NO }}
+      # Update the value.yaml with new image tags
+      - name: Update files with new image tags
+        run: |
+          file_to_update="/pch-client-chart/values.yaml"
+          frontendtag="frontend_tag"
+          parsertag="parser_tag"
+          sed -i "s/${frontendtag}:.*\$/${frontendtag}: \"${{ steps.version-generator.outputs.BUILD_NO }}\"/g" ${file_to_update}
+          sed -i "s/${parsertag}:.*\$/${parsertag}: \"${{ steps.version-generator.outputs.BUILD_NO }}\"/g" ${file_to_update}
+          cat $file_to_update
       # Start minikube
       - name: Start minikube
         uses: kremmydas/setup-minikube@master
