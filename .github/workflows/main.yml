@@ -32,6 +32,11 @@ jobs:
           d=$(date +%Y%m%d)
           echo "$d"
           echo "::set-output name=BUILD_NO::${d}_${{ github.run_number }}"
+      - name: docker login
+        env:
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
       # Build and push the PCH Client UI
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build & push the PCH Client UI
