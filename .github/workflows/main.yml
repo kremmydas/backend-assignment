@@ -23,28 +23,83 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
+      # Generate version based on current date and run number
+      - name: Version generator
+        id: version-generator
+        run: |
+          echo ${{ github.run_id }}
+          echo ${{ github.run_number }}
+          d=$(date +%Y%m%d)
+          echo "$d"
+          echo "::set-output name=BUILD_NO::${d}_${{ github.run_number }}"
+      - name: docker login
+        env:
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
+      # Build and push the PCH Client UI
+      - uses: mr-smithers-excellent/docker-build-push@v5
+        name: Build & push the PCH Client UI
+        with:
+          image: andreask81/frontend
+          tags: ${{ steps.version-generator.outputs.BUILD_NO }}, latest
+          registry: docker.io
+          dockerfile: ui/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          directory: ui
+
+      # Build and push the PCH Client Parser
+      - uses: mr-smithers-excellent/docker-build-push@v5
+        name: Build & push PCH Client Parser
+        with:
+          image: andreask81/parser
+          tags: ${{ steps.version-generator.outputs.BUILD_NO }}, latest
+          registry: docker.io
+          dockerfile: parser/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          directory: parser
+      # Update the value.yaml with new image tags
+      - name: Update files with new image tags
+        run: |
+          file_to_update="pch-client-chart/values.yaml"
+          frontendtag="frontend_tag"
+          parsertag="parser_tag"
+          sed -i "s/${frontendtag}:.*\$/${frontendtag}: \"${{ steps.version-generator.outputs.BUILD_NO }}\"/g" ${file_to_update}
+          sed -i "s/${parsertag}:.*\$/${parsertag}: \"${{ steps.version-generator.outputs.BUILD_NO }}\"/g" ${file_to_update}
+          cat $file_to_update
+      # Start minikube
       - name: Start minikube
         uses: kremmydas/setup-minikube@master
       - name: Wait for 30 seconds for K8s pods to be ready
-        run: | 
-          sleep 30
+        run: sleep 30
+      # Deploy chart to minikube
       - name: Deploy to minikube
-        run:
-          helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
+        run: helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
       - name: Wait for 60 seconds for app pods to be ready
-        run: | 
-          sleep 60
+        run: sleep 60
       - name: Check the pods
-        run:
-          kubectl get pods -A
+        run: kubectl get pods -A
+      # Test service URL
       - name: Test service URL using Ingress Controller
         run: | 
           echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
           echo -n "------------------opening the service------------------"
           curl -I -k pchdemo.local
+      # Check ixp_server_data table
       - name: Check ixp_server_data table
         run: |
           sleep 120
           kubectl exec $(echo $(kubectl get pods -l app=postgres) | awk '{print $6}') -- sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "select * from ixp_server_data;"'
+      
+      # Commit changes with new version
+      - uses: EndBug/add-and-commit@v7.2.1 
+        with:
+          # Name of the branch to use, if different from the one that triggered the workflow
+          branch: test_ci
+
+          # The message for the commit. The [skip ci] is required for not trigger the CICD
+          message: 'Update new image versions [skip ci]'
 
 
