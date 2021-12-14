@@ -52,12 +52,12 @@ services:
   frontend:
     image: 
       repository: andreask81/frontend
-      frontend_tag: "20211214_44"
+      frontend_tag: "20211214_47"
     replicas: 1
     ports:
       - 80
   parser:
     image: 
       repository: andreask81/parser
-      parser_tag: "20211214_44"
+      parser_tag: "20211214_47"
     replicas: 1
