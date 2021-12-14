@@ -92,5 +92,14 @@ jobs:
         run: |
           sleep 120
           kubectl exec $(echo $(kubectl get pods -l app=postgres) | awk '{print $6}') -- sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "select * from ixp_server_data;"'
+      
+      # Commit changes with new version
+      - uses: EndBug/add-and-commit@v7.2.1 
+        with:
+          # Name of the branch to use, if different from the one that triggered the workflow
+          branch: test_ci
+
+          # The message for the commit. The [skip ci] is required for not trigger the CICD
+          message: 'Update new image versions [skip ci]'
 
 
