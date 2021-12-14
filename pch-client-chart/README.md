@@ -24,7 +24,8 @@ docker push localhost:5000/myimage
 ```
 
 Note that the image name for `frontend` and `parser` services in `values.yaml` must be edited accordingly.
-&nbsp;
+
+
 ### 2. Download and install minikube
 
 We will use minikube to setup a local Kubernetes cluster on macOS.
@@ -32,7 +33,8 @@ We will use minikube to setup a local Kubernetes cluster on macOS.
 ```curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64 && chmod +x minikube```
 
 `sudo mv minikube /usr/local/bin`
-&nbsp;
+
+
 ### 3. Start minikube
 
 `minikube start --memory 4096 --cpus 4`
@@ -40,13 +42,15 @@ We will use minikube to setup a local Kubernetes cluster on macOS.
 Enable Ingress controller:
 
 `minikube addons enable ingress`
-&nbsp;
+
+
 ### 4. Install the pch-client chart
 
 Install the helm chart from the local folder:
 
 `helm install -f values.yaml pch-client .`
-&nbsp;
+
+
 ### 5. Using ingress resource
 
 Ingress is enabled by default in `values.yaml` file. By default, the hostname defaults to `pchdemo.local`; to change it, you can provide a value in your yaml file when installing with helm for value `ingress.host`.
@@ -54,18 +58,24 @@ Ingress is enabled by default in `values.yaml` file. By default, the hostname de
 Edit `/etc/hosts` file to point to the minikube IP for the specified hostname:
 
 `echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts`
-&nbsp;
+
+
 ### 5. CI/CD using Github actions
 
 Github actions jobs are defined in `.github/workflows/main.yml ` file.
 
 - A pull request triggers the workflow only for the main branch.
-- An [action](https://github.com/kremmydas/setup-minikube) is used to setup a minikube cluster.
+- Generate version based on current date and run number
+- Build and push parser and frontend images to Docker Hub
+- Update the value.yaml with new image tags
+- Setup a minikube cluster ([action](https://github.com/kremmydas/setup-minikube)
 - The helm chart is deployed on the cluster.
 - Some checks are included to verify the deployment:
 	- test the service URL with curl
 	- check data in ixp_server_data table
-&nbsp;
+- Commit changes with new version to the current branch
+
+
 ### 6. Observability
 
 Kubernetes dashboard can be used for basic monitoring and metrics.
