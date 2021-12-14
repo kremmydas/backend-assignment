@@ -23,6 +23,18 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
+      - name: docker login
+        env:
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
+      - name: Build the Docker image
+          run: docker compose build
+      - name: Docker Push
+          run: andreask81/frontend:latest
+      - name: Docker Push
+          run: andreask81/parser:latest
       - name: Start minikube
         uses: kremmydas/setup-minikube@master
       - name: Wait for 30 seconds for K8s pods to be ready
