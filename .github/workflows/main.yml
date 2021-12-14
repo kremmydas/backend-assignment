@@ -22,7 +22,10 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v2
+      - name: Git checkout
+        uses: actions/checkout@v2
+      - name: Branch name
+        run: echo running on branch ${GITHUB_REF##*/}
       # Generate version based on current date and run number
       - name: Version generator
         id: version-generator
@@ -69,6 +72,7 @@ jobs:
           sed -i "s/${frontendtag}:.*\$/${frontendtag}: \"${{ steps.version-generator.outputs.BUILD_NO }}\"/g" ${file_to_update}
           sed -i "s/${parsertag}:.*\$/${parsertag}: \"${{ steps.version-generator.outputs.BUILD_NO }}\"/g" ${file_to_update}
           cat $file_to_update
+      
       # Start minikube
       - name: Start minikube
         uses: kremmydas/setup-minikube@master
@@ -93,13 +97,13 @@ jobs:
           sleep 120
           kubectl exec $(echo $(kubectl get pods -l app=postgres) | awk '{print $6}') -- sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "select * from ixp_server_data;"'
       
-      # Commit changes with new version
-      - uses: EndBug/add-and-commit@v7.2.1 
+      # Commit changes with new version to the current branch
+      - name: Commit changes with new version to release branch
+        uses: EndBug/add-and-commit@v7.2.1 
         with:
-          # Name of the branch to use, if different from the one that triggered the workflow
-          branch: test_ci
-
+          # Name of the branch to use
+          branch: ${GITHUB_REF##*/}
           # The message for the commit. The [skip ci] is required for not trigger the CICD
-          message: 'Update new image versions [skip ci]'
+          message: 'Update image with version ${{ steps.version-generator.outputs.BUILD_NO }} [skip ci]'
 
 
