@@ -68,7 +68,7 @@ Github actions jobs are defined in `.github/workflows/main.yml` file.
 - Generate version based on current date and run number
 - Build and push parser and frontend images to Docker Hub
 - Update the value.yaml with new image tags
-- Setup a minikube cluster ([action](https://github.com/kremmydas/setup-minikube)
+- Setup a minikube cluster ([action](https://github.com/kremmydas/setup-minikube))
 - The helm chart is deployed on the cluster.
 - Some checks are included to verify the deployment:
 	- test the service URL with curl
