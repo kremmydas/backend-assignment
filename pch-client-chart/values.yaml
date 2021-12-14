@@ -50,10 +50,14 @@ services:
     ports:
       - 8080
   frontend:
-    image: andreask81/frontend:latest
+    image: 
+      repository: andreask81/frontend
+      frontend_tag: "frontend_tag"
     replicas: 1
     ports:
       - 80
   parser:
-    image: andreask81/parser:latest
+    image: 
+      repository: andreask81/parser
+      parser_tag: "parser_tag"
     replicas: 1
