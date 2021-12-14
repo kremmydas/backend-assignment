@@ -63,7 +63,7 @@ jobs:
       # Update the value.yaml with new image tags
       - name: Update files with new image tags
         run: |
-          file_to_update="/pch-client-chart/values.yaml"
+          file_to_update="pch-client-chart/values.yaml"
           frontendtag="frontend_tag"
           parsertag="parser_tag"
           sed -i "s/${frontendtag}:.*\$/${frontendtag}: \"${{ steps.version-generator.outputs.BUILD_NO }}\"/g" ${file_to_update}
