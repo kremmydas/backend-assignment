@@ -7,8 +7,8 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     # branches: [ main ]
-    tags:
-      - 'v*'
+    # tags:
+    #   - 'v*'
   pull_request:
     branches: [ main ]
 
@@ -27,9 +27,16 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
         
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/*/}
+      # - name: Get the version
+      #   id: get_version
+      #   run: echo ::set-output name=VERSION::${GITHUB_REF#refs/*/}
+
+      - name: Create tag artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{github.ref_name}}
+          path: Release
+
 
       # Generate version based on current date and run number
       - name: Version generator
@@ -52,7 +59,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: andreask81/parser:${{ steps.get_version.outputs.VERSION }}
+          tags: andreask81/parser:${{github.ref_name}}
 
       # Build and push the PCH Client UI
       - uses: mr-smithers-excellent/docker-build-push@v5
