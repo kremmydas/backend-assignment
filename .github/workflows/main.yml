@@ -103,6 +103,6 @@ jobs:
           # Default: the branch that triggered the run
           # branch: main
           # The message for the commit. The [skip ci] is required for not trigger the CICD
-          message: 'Update image with version ${{ steps.version-generator.outputs.BUILD_NO }}'
+          message: 'Update image with version ${{ steps.get_version.outputs.GIT_TAG }}'
 
 
