@@ -26,12 +26,15 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
-      - name: Set env
-        run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
+      # - name: Set env
+      #   run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
         
-      # - name: Get the version
-      #   id: get_version
-      #   run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+      - name: Get the version
+        id: get_version
+        run: | 
+          echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+          echo $GIT_TAG
+          echo ${{ env.GIT_TAG }}
 
       # - name: Create tag artifact
       #   uses: actions/upload-artifact@v2
@@ -61,7 +64,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: andreask81/parser:$RELEASE_VERSION
+          tags: andreask81/parser:$GIT_TAG
 
       # Build and push the PCH Client UI
       - uses: mr-smithers-excellent/docker-build-push@v5
