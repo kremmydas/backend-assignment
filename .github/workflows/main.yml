@@ -27,34 +27,11 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
 
-      # - name: Create tag artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: ${{github.ref_name}}
-      #     path: Release
-      
-      # - name: Set env
-      #   run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
-
       - name: Get the version
         id: get_version
         run: |
           echo "${{github.ref_name}}"
           echo "::set-output name=GIT_TAG::${{ github.ref_name }}"
-
-      # - name: Get the version
-      #   id: get_version
-      #   run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-
-      # Generate version based on current date and run number
-      - name: Version generator
-        id: version-generator
-        run: |
-          echo ${{ github.run_id }}
-          echo ${{ github.run_number }}
-          d=$(date +%Y%m%d)
-          echo "$d"
-          echo "::set-output name=BUILD_NO::${d}_${{ github.run_number }}"
 
       - name: docker login
         env:
@@ -62,20 +39,12 @@ jobs:
           DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
         run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
 
-      # - name: Build and push
-      #   id: docker_build
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     push: true
-      #     tags: andreask81/parser:${{ steps.get_version.outputs.GIT_TAG }}
-
       # Build and push the PCH Client frontend
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build & push the PCH Client UI
         with:
           image: andreask81/frontend
           tags: ${{ steps.get_version.outputs.GIT_TAG }}, latest
-          # tags: ${{ steps.version-generator.outputs.BUILD_NO }}, latest
           registry: docker.io
           dockerfile: ui/Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -88,7 +57,6 @@ jobs:
         with:
           image: andreask81/parser
           tags: ${{ steps.get_version.outputs.GIT_TAG }}, latest
-          # tags: ${{ steps.version-generator.outputs.BUILD_NO }}, latest
           registry: docker.io
           dockerfile: parser/Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
