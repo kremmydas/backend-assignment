@@ -24,8 +24,10 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
-      - name: Get the tag name
-        run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+        
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
 
       # Generate version based on current date and run number
       - name: Version generator
@@ -48,7 +50,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: andreask81/parser:${{ env.TAG }}
+          tags: andreask81/parser:${{ steps.get_version.outputs.VERSION }}
 
       # Build and push the PCH Client UI
       - uses: mr-smithers-excellent/docker-build-push@v5
