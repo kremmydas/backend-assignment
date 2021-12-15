@@ -92,10 +92,10 @@ jobs:
       # Check ixp_server_data table
       - name: Check ixp_server_data table
         run: |
-          sleep 120
+          sleep 60
           kubectl exec $(echo $(kubectl get pods -l app=postgres) | awk '{print $6}') -- sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "select * from ixp_server_data;"'
       
-      Commit changes with new version to the current branch
+      # Commit changes with new version to the current branch
       - name: Commit changes with new version
         uses: EndBug/add-and-commit@v7.2.1 
         with:
