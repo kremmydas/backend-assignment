@@ -42,9 +42,9 @@ jobs:
           echo "${{github.ref_name}}"
           echo "::set-output name=GIT_TAG::${{ github.ref_name }}"
 
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      # - name: Get the version
+      #   id: get_version
+      #   run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       # Generate version based on current date and run number
       - name: Version generator
