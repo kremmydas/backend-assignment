@@ -36,11 +36,11 @@ jobs:
         run: |
           echo "${{ steps.get_version.outputs.VERSION }}"
         
-      - name: Get the version
-        id: get_version
-        run: | 
-          echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
-          echo "${{ env.GIT_TAG }}""
+      # - name: Get the version
+      #   id: get_version
+      #   run: | 
+      #     echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+      #     echo "${{ env.GIT_TAG }}""
 
       # Generate version based on current date and run number
       - name: Version generator
