@@ -5,10 +5,10 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     # branches: [ main ]
-    tags:
-      - 'v*'
-  # pull_request:
-  #   branches: [ main ]
+    # tags:
+    #   - 'v*'
+  pull_request:
+    branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -31,35 +31,35 @@ jobs:
           echo "${{github.ref_name}}"
           echo "::set-output name=GIT_TAG::${{ github.ref_name }}"
 
-      - name: docker login
-        env:
-          DOCKER_USER: ${{secrets.DOCKER_USER}}
-          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
+      # - name: docker login
+      #   env:
+      #     DOCKER_USER: ${{secrets.DOCKER_USER}}
+      #     DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      #   run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
 
-      # Build and push the PCH Client frontend
-      - uses: mr-smithers-excellent/docker-build-push@v5
-        name: Build & push the PCH Client UI
-        with:
-          image: andreask81/frontend
-          tags: ${{ steps.get_version.outputs.GIT_TAG }}, latest
-          registry: docker.io
-          dockerfile: ui/Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          directory: ui
+      # # Build and push the PCH Client frontend
+      # - uses: mr-smithers-excellent/docker-build-push@v5
+      #   name: Build & push the PCH Client UI
+      #   with:
+      #     image: andreask81/frontend
+      #     tags: ${{ steps.get_version.outputs.GIT_TAG }}, latest
+      #     registry: docker.io
+      #     dockerfile: ui/Dockerfile
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      #     directory: ui
 
-      # Build and push the PCH Client Parser
-      - uses: mr-smithers-excellent/docker-build-push@v5
-        name: Build & push PCH Client Parser
-        with:
-          image: andreask81/parser
-          tags: ${{ steps.get_version.outputs.GIT_TAG }}, latest
-          registry: docker.io
-          dockerfile: parser/Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          directory: parser
+      # # Build and push the PCH Client Parser
+      # - uses: mr-smithers-excellent/docker-build-push@v5
+      #   name: Build & push PCH Client Parser
+      #   with:
+      #     image: andreask81/parser
+      #     tags: ${{ steps.get_version.outputs.GIT_TAG }}, latest
+      #     registry: docker.io
+      #     dockerfile: parser/Dockerfile
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      #     directory: parser
           
       # Update the value.yaml with new image tags
       - name: Update files with new image tags
@@ -71,29 +71,29 @@ jobs:
           sed -i "s/${parsertag}:.*\$/${parsertag}: \"${{ steps.get_version.outputs.GIT_TAG }}\"/g" ${file_to_update}
           cat $file_to_update
       
-      # Start minikube
-      - name: Start minikube
-        uses: kremmydas/setup-minikube@master
-      - name: Wait for 30 seconds for K8s pods to be ready
-        run: sleep 30
-      # Deploy chart to minikube
-      - name: Deploy to minikube
-        run: helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
-      - name: Wait for 60 seconds for app pods to be ready
-        run: sleep 60
-      - name: Check the pods
-        run: kubectl get pods -A
-      # Test service URL
-      - name: Test service URL using Ingress Controller
-        run: | 
-          echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
-          echo -n "------------------opening the service------------------"
-          curl -I -k pchdemo.local
-      # Check ixp_server_data table
-      - name: Check ixp_server_data table
-        run: |
-          sleep 60
-          kubectl exec $(echo $(kubectl get pods -l app=postgres) | awk '{print $6}') -- sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "select * from ixp_server_data;"'
+      # # Start minikube
+      # - name: Start minikube
+      #   uses: kremmydas/setup-minikube@master
+      # - name: Wait for 30 seconds for K8s pods to be ready
+      #   run: sleep 30
+      # # Deploy chart to minikube
+      # - name: Deploy to minikube
+      #   run: helm install -f pch-client-chart/values.yaml pch-client ./pch-client-chart
+      # - name: Wait for 60 seconds for app pods to be ready
+      #   run: sleep 60
+      # - name: Check the pods
+      #   run: kubectl get pods -A
+      # # Test service URL
+      # - name: Test service URL using Ingress Controller
+      #   run: | 
+      #     echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
+      #     echo -n "------------------opening the service------------------"
+      #     curl -I -k pchdemo.local
+      # # Check ixp_server_data table
+      # - name: Check ixp_server_data table
+      #   run: |
+      #     sleep 60
+      #     kubectl exec $(echo $(kubectl get pods -l app=postgres) | awk '{print $6}') -- sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "select * from ixp_server_data;"'
       
       # Commit changes with new version to the current branch
       - name: Commit changes with new version
