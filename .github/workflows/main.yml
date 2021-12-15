@@ -5,12 +5,12 @@ name: CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
-  # push:
+  push:
     # branches: [ main ]
-    # tags:
-    #   - 'v*'
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*'
+  # pull_request:
+  #   branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -27,26 +27,15 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
 
-      - name: Branch name
-        id: branch_name
-        run: |
-          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
-          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
-          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
-
-      - name: Build base image
-        run: |
-          echo $SOURCE_NAME
-          echo $SOURCE_BRANCH
-          echo $SOURCE_TAG
-        env:
-          SOURCE_NAME: ${{ steps.branch_name.outputs.SOURCE_NAME }}
-          SOURCE_BRANCH: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
-          SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }}
+      - name: Create tag artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{github.ref_name}}
+          path: Release
         
       - name: Get the version
         id: get_version
-        run: echo "${{ env.SOURCE_TAG }}""
+        run: echo "${{github.ref_name}}"
 
       # Generate version based on current date and run number
       - name: Version generator
