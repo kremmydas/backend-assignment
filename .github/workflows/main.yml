@@ -25,7 +25,9 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
       - name: Get the tag name
-        run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+        run: 
+          echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+          echo "${{ env.TAG }}"
 
       # Generate version based on current date and run number
       - name: Version generator
