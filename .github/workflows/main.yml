@@ -26,25 +26,23 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
-        run: |
-          echo "action_state=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
       # - name: Set env
       #   run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
 
-      # - name: Set the value
-      #   id: step_one
-      #   run: |
-      #     echo "action_state=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+      - name: Set the value
+        id: step_one
+        run: |
+          echo "action_state=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
       - name: Use the value
         id: step_two
         run: |
-          echo "${{ env.action_state }}" # This will output 'yellow'
+          echo "${{ github.event.release.tag_name }}" # This will output 'yellow'
         
-      # - name: Get the version
-      #   id: get_version
-      #   run: | 
-      #     echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
-      #     echo "${{ env.GIT_TAG }}""
+      - name: Get the version
+        id: get_version
+        run: | 
+          echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+          echo "${{ env.GIT_TAG }}""
 
       # - name: Create tag artifact
       #   uses: actions/upload-artifact@v2
