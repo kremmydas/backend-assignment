@@ -95,14 +95,14 @@ jobs:
           sleep 120
           kubectl exec $(echo $(kubectl get pods -l app=postgres) | awk '{print $6}') -- sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "select * from ixp_server_data;"'
       
-      # Commit changes with new version to the current branch
-      # - name: Commit changes with new version
-      #   uses: EndBug/add-and-commit@v7.2.1 
-      #   with:
-      #     # The name of the branch to use, if different from the one that triggered the workflow.
-      #     # Default: the branch that triggered the run
-      #     # branch: main
-      #     # The message for the commit. The [skip ci] is required for not trigger the CICD
-      #     message: 'Update image with version ${{ steps.version-generator.outputs.BUILD_NO }}'
+      Commit changes with new version to the current branch
+      - name: Commit changes with new version
+        uses: EndBug/add-and-commit@v7.2.1 
+        with:
+          # The name of the branch to use, if different from the one that triggered the workflow.
+          # Default: the branch that triggered the run
+          # branch: main
+          # The message for the commit. The [skip ci] is required for not trigger the CICD
+          message: 'Update image with version ${{ steps.get_version.outputs.GIT_TAG }}'
 
 
