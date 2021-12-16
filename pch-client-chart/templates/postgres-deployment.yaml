@@ -22,15 +22,31 @@ spec:
       - name: postgres
         image: {{ .image }}
         readinessProbe:
-          tcpSocket:
-            port: 5432
+          exec:
+            command:
+              - bash
+              - -ec
+              - 'psql -w -U {{ $.Values.dbUser }} -d {{ $.Values.dbName }} -h 127.0.0.1 -c "SELECT 1"'
           initialDelaySeconds: 10
           timeoutSeconds: 10
           periodSeconds: 5
           failureThreshold: 2
         livenessProbe:
-          tcpSocket:
-            port: 5432
+          exec:
+            command:
+              - bash
+              - -ec
+              - 'psql -w -U {{ $.Values.dbUser }} -d {{ $.Values.dbName }} -h 127.0.0.1 -c "SELECT 1"'
+          initialDelaySeconds: 15
+          timeoutSeconds: 10
+          periodSeconds: 5
+          failureThreshold: 2
+        startupProbe:
+          exec:
+            command:
+              - bash
+              - -ec
+              - 'psql -w -U {{ $.Values.dbUser }} -d {{ $.Values.dbName }} -h 127.0.0.1 -c "SELECT 1"'
           initialDelaySeconds: 15
           timeoutSeconds: 10
           periodSeconds: 5
