@@ -1,0 +1,6 @@
+dependencies:
+- name: postgresql-ha
+  repository: ""
+  version: 8.1.2
+digest: sha256:ccb82b8559381adc8133fce6962b23863b71e7213a286379e22b651633d1956b
+generated: "2021-12-16T15:46:56.173387+02:00"

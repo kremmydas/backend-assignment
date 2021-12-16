@@ -46,10 +46,13 @@ Enable Ingress controller:
 
 ### 4. Install the pch-client chart
 
+Test chart:
+
+`helm install -f ./pch-client-chart/values.yaml --dry-run --debug pch-client ./pch-client-chart`
+
 Install the helm chart from the local folder:
 
 `helm install -f ./pch-client-chart/values.yaml pch-client ./pch-client-chart`
-
 
 ### 5. Using ingress resource
 

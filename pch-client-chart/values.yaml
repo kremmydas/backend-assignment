@@ -61,3 +61,7 @@ services:
       repository: andreask81/parser
       parser_tag: "latest"
     replicas: 1
+
+# postgresql-ha
+postgresql-ha:
+  enabled: false
