@@ -7,20 +7,17 @@ metadata:
   {{- range $key, $value := .Values.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
   {{- end }}
-  {{- range $key, $value := .Values.ingress.frontend.annotations }}
-    {{ $key }}: {{ $value | quote }}
-  {{- end }}
   labels:
 {{ include "pch-client.labels" . | indent 4 }}
 spec:
   {{- if .Values.ingress.tlsEnabled }}
   tls:
   - hosts:
-    - {{ .Values.ingress.host | default "pchdemo.local" }}
+    - {{ .Values.ingress.host | default "pchclient.local" }}
     secretName: secret-tls
   {{- end }}
   rules:
-  - host: {{ .Values.ingress.host | default "pchdemo.local" }}
+  - host: {{ .Values.ingress.host | default "pchclient.local" }}
     http:
       paths:
       - path: /
@@ -30,36 +27,4 @@ spec:
             name: {{ .Values.webappHost }}
             port: 
               number: {{ .Values.webappPort }}
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: graphql-ingress
-  annotations:
-  {{- range $key, $value := .Values.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
-  {{- end }}
-  {{- range $key, $value := .Values.ingress.graphql.annotations }}
-    {{ $key }}: {{ $value | quote }}
-  {{- end }}
-  labels:
-{{ include "pch-client.labels" . | indent 4 }}
-spec:
-  {{- if .Values.ingress.tlsEnabled }}
-  tls:
-  - hosts:
-    - {{ .Values.ingress.host | default "pchdemo.local" }}
-    secretName: secret-tls
-  {{- end }}
-  rules:
-  - host: {{ .Values.ingress.host | default "pchdemo.local" }}
-    http:
-      paths:
-      - path: /api/graphql
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.hasuraHost }}
-            port: 
-              number: {{ .Values.hasuraPort }}
 {{- end -}}

@@ -56,11 +56,11 @@ Install the helm chart from the local folder:
 
 ### 5. Using ingress resource
 
-Ingress is enabled by default in `values.yaml` file. By default, the hostname defaults to `pchdemo.local`; to change it, you can provide a value in your yaml file when installing with helm for value `ingress.host`.
+Ingress is enabled by default in `values.yaml` file. By default, the hostname defaults to `pchclient.local`; to change it, you can provide a value in your yaml file when installing with helm for value `ingress.host`.
 
 Edit `/etc/hosts` file to point to the minikube IP for the specified hostname:
 
-`echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts`
+`echo $(minikube ip) pchclient.local | sudo tee -a /etc/hosts`
 
 
 ### 5. CI/CD using Github actions

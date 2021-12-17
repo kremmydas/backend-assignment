@@ -90,9 +90,9 @@ jobs:
       # Test service URL
       - name: Test service URL using Ingress Controller
         run: | 
-          echo $(minikube ip) pchdemo.local | sudo tee -a /etc/hosts
+          echo $(minikube ip) pchclient.local | sudo tee -a /etc/hosts
           echo -n "------------------opening the service------------------"
-          curl -I -k pchdemo.local
+          curl -I -k pchclient.local
       # Check ixp_server_data table
       - name: Check ixp_server_data table
         run: |
